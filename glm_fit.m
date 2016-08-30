@@ -6,7 +6,7 @@ I_e=I_e_vect_mat(3:6,2:end)';trainM=spTrain(3:6,:)';
 g=0.1;k=1;
 
 %%%%Design matrix
-[expg_Vreset,expg_k]=gconv(I_e,trainM,g); %temporally convolve paramters with g upto spike time
+[expg_Vreset,expg_k]=gconv(I_e,trainM,g); %temporally convolve current and V_reset with exp(-gt) upto last spike time
 
 %%%%Link function
 link = @(mu) log(exp(mu)-1);
