@@ -21,7 +21,7 @@ V_plot_vect=zeros(1,length(t_vect));
 %INTEGRATE THE EQUATION dV/dt = -g*V+k*I_e
 PlotNum=0;
 I_Stim_vect=1:0.02:1.1; %magnitudes of pulse of injected current [nA]
-spTrain=zeros(length(I_Stim_vect),t_end);
+spTrain=zeros(t_end,length(I_Stim_vect));
 
 for I_Stim=I_Stim_vect; %loop over different I_Stim values
     PlotNum=PlotNum+1;
@@ -31,7 +31,7 @@ for I_Stim=I_Stim_vect; %loop over different I_Stim values
     I_e_vect=zeros(1,t_StimStart/dt); %portion of I_e_vect from t=0 to t_StimStart
     I_e_vect=[I_e_vect I_Stim*ones(1,1+((t_StimEnd-t_StimStart)/dt))];
     I_e_vect=[I_e_vect zeros(1,(t_end-t_StimEnd)/dt)];
-    I_e_vect_mat(PlotNum,:)=I_e_vect;
+    I_e_vect_mat(:,PlotNum)=I_e_vect;
     
     NumSpikes=0; %holds number of spikes that have occurred
     for t=dt:dt:t_end %loop through values of t in steps of df ms        
@@ -43,7 +43,7 @@ for I_Stim=I_Stim_vect; %loop over different I_Stim values
             V_vect(i+1)=V_reset; %set voltage back to V_reset
             V_plot_vect(i+1)=V_spike; %set vector that will be plotted to show a spike here
             NumSpikes=NumSpikes+1; %add 1 to the total spike count
-            spTrain(PlotNum,t)=1;
+            spTrain(t,PlotNum)=1;
         else %voltage didn't cross threshold so cell does not spike
             V_plot_vect(i+1)=V_vect(i+1); %plot actual voltage
         end
