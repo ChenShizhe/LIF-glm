@@ -31,6 +31,17 @@ set(gca,'FontSize',12);
 ylabel('True spikes');
 
 
+%%
+%%%%glm fit
+link = @(mu) log(exp(mu)-1);
+derlink = @(mu) exp(mu)./(exp(mu)-1);
+invlink = @(resp) log(1 + exp(resp));
+F = {link, derlink, invlink};
+
+[betahat_conv,~,stats_conv]=glmfit([expg_Vreset(:) expg_k(:)],trainM(:),'Poisson','link',F);
+
+[betahat_conv(1) -V_th;betahat_conv(2) V_reset;betahat_conv(3) k]
+
 
 
 
