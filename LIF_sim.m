@@ -11,7 +11,7 @@ t_StimEnd=400; %time to end injecting current
 V_th=-55; %spike threshold
 V_reset=-70; %value to reset voltage to after a spike
 V_spike=20; %value to draw a spike to, when cell spikes
-k=0.1;g=0.0005;
+k=1;g=0.1;
 
 %%%DEFINE INITIAL VALUES AND VECTORS TO HOLD RESULTS
 t_vect=0:dt:t_end; 
@@ -20,7 +20,7 @@ V_plot_vect=zeros(1,length(t_vect));
 
 %INTEGRATE THE EQUATION dV/dt = -g*V+k*I_e
 PlotNum=0;
-I_Stim_vect=1:0.02:1.1; %magnitudes of pulse of injected current [nA]
+I_Stim_vect=1.43:0.04:1.63; %magnitudes of pulse of injected current [nA]
 spTrain=zeros(t_end,length(I_Stim_vect));
 
 for I_Stim=I_Stim_vect; %loop over different I_Stim values
@@ -35,7 +35,7 @@ for I_Stim=I_Stim_vect; %loop over different I_Stim values
     
     NumSpikes=0; %holds number of spikes that have occurred
     for t=dt:dt:t_end %loop through values of t in steps of df ms        
-        dV=(-g*V_vect(i)+k*I_e_vect(i))*dt; %Euler's method
+        dV=(-g*(V_vect(i)-V_reset)+k*I_e_vect(i))*dt; %Euler's method
         V_vect(i+1)=V_vect(i)+dV;
         
         %if statement below says what to do if voltage crosses threshold
