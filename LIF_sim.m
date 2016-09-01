@@ -18,7 +18,7 @@ t_vect=0:dt:t_end;
 V_vect=zeros(1,length(t_vect));
 V_plot_vect=zeros(1,length(t_vect));
 
-%INTEGRATE THE EQUATION dV/dt = -g*V+k*I_e
+%INTEGRATE THE EQUATION dV/dt = -g*(V-V_reset)+k*I_e
 PlotNum=0;
 I_Stim_vect=1.43:0.04:1.63; %magnitudes of pulse of injected current [nA]
 spTrain=zeros(t_end,length(I_Stim_vect));
