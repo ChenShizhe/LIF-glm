@@ -8,9 +8,13 @@ dt=1; %time step ms
 t_end=500; %total run time ms
 t_StimStart=100; %time to start injecting current
 t_StimEnd=400; %time to end injecting current
-V_th=-55; %spike threshold
-V_reset=-70; %value to reset voltage to after a spike
+V_th=-55; %spike threshold [mV]
+E_L=-70; %resting membrane potential [mV]
+V_reset=-75; %value to reset voltage to after a spike [mV]
 V_spike=20; %value to draw a spike to, when cell spikes
+tau=10; %membrane time constant [ms]
+R_m=10; %membrane resistance [MOhm]
+
 k=1;g=0.1;
 
 %%%DEFINE INITIAL VALUES AND VECTORS TO HOLD RESULTS
@@ -18,7 +22,7 @@ t_vect=0:dt:t_end;
 V_vect=zeros(1,length(t_vect));
 V_plot_vect=zeros(1,length(t_vect));
 
-%INTEGRATE THE EQUATION dV/dt = -g*(V-V_reset)+k*I_e
+%INTEGRATE THE EQUATION tau*dV/dt = -V + E_L + I_e*R_m
 PlotNum=0;
 I_Stim_vect=1.43:0.04:1.63; %magnitudes of pulse of injected current [nA]
 spTrain=zeros(t_end,length(I_Stim_vect));
@@ -26,7 +30,7 @@ spTrain=zeros(t_end,length(I_Stim_vect));
 for I_Stim=I_Stim_vect; %loop over different I_Stim values
     PlotNum=PlotNum+1;
     i=1; %index denoting which element of V is being assigned
-    V_vect(i)=V_reset; %first element of V, i.e. value of V at t=0
+    V_vect(i)=E_L; %first element of V, i.e. value of V at t=0
     V_plot_vect(i)=V_vect(i); %if no spike, then just plot the actual voltage V
     I_e_vect=zeros(1,t_StimStart/dt); %portion of I_e_vect from t=0 to t_StimStart
     I_e_vect=[I_e_vect I_Stim*ones(1,1+((t_StimEnd-t_StimStart)/dt))];
@@ -35,8 +39,11 @@ for I_Stim=I_Stim_vect; %loop over different I_Stim values
     
     NumSpikes=0; %holds number of spikes that have occurred
     for t=dt:dt:t_end %loop through values of t in steps of df ms        
-        dV=(-g*(V_vect(i)-V_reset)+k*I_e_vect(i))*dt; %Euler's method
-        V_vect(i+1)=V_vect(i)+dV;
+        %V_inf = E_L + I_e_vect(i)*R_m;
+        %V_vect(i+1) = V_inf + (V_vect(i)-V_inf)*exp(-dt/tau);
+        
+        V_vect(i+1) = V_vect(i) + (E_L-V_vect(i) + I_e_vect(i)*R_m)/tau; %Euler's method
+        
         
         %if statement below says what to do if voltage crosses threshold
         if (V_vect(i+1)>V_th) %cell spiked
