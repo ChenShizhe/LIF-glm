@@ -1,5 +1,4 @@
-%%
-%%%%simulation
+%% Simulation
 clear all;
 close all;
 
@@ -15,16 +14,14 @@ V_spike=20; %value to draw a spike to, when cell spikes
 tau=10; %membrane time constant [ms]
 R_m=10; %membrane resistance [MOhm]
 
-k=1;g=0.1;
-
 %%%DEFINE INITIAL VALUES AND VECTORS TO HOLD RESULTS
 t_vect=0:dt:t_end; 
 V_vect=zeros(1,length(t_vect));
 V_plot_vect=zeros(1,length(t_vect));
 
-%INTEGRATE THE EQUATION tau*dV/dt = -V + E_L + I_e*R_m
+%INTEGRATE THE EQUATION tau*dV/dt = -V + E_L + I_e*R_m, I_e with Gaussian noise
 PlotNum=0;
-I_Stim_vect=1.43:0.04:1.63; %magnitudes of pulse of injected current [nA]
+I_Stim_vect=1.39:0.04:1.67; %magnitudes of pulse of injected current [nA]
 spTrain=zeros(t_end,length(I_Stim_vect));
 
 for I_Stim=I_Stim_vect; %loop over different I_Stim values
@@ -35,6 +32,7 @@ for I_Stim=I_Stim_vect; %loop over different I_Stim values
     I_e_vect=zeros(1,t_StimStart/dt); %portion of I_e_vect from t=0 to t_StimStart
     I_e_vect=[I_e_vect I_Stim*ones(1,1+((t_StimEnd-t_StimStart)/dt))];
     I_e_vect=[I_e_vect zeros(1,(t_end-t_StimEnd)/dt)];
+    I_e_vect=awgn(I_e_vect,10,'measured');
     I_e_vect_mat(:,PlotNum)=I_e_vect;
     
     NumSpikes=0; %holds number of spikes that have occurred
@@ -66,7 +64,7 @@ for I_Stim=I_Stim_vect; %loop over different I_Stim values
         title('Voltage vs. time');
     end
     if (PlotNum==length(I_Stim_vect))
-        xlabel('Time in ms');
+        xlabel('Time (ms)');
     end
-    ylabel('Voltage in mV');
+    ylabel('Voltage (mV)');
 end
