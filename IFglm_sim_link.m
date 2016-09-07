@@ -76,6 +76,9 @@ for I_Stim=I_Stim_vect; %loop over different I_Stim values
         xlabel('Time (ms)');
     end
     ylabel('Voltage (mV)');
+    
+    clear lambda
+    V_vect=zeros(1,length(t_vect));
 end
 
 
