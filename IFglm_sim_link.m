@@ -54,9 +54,9 @@ for I_Stim=I_Stim_vect; %loop over different I_Stim values
             V_vect(i+1)=V_reset; %set voltage back to V_reset
             V_plot_vect(i+1)=V_spike; %set vector that will be plotted to show a spike here
             NumSpikes=NumSpikes+1; %add 1 to the total spike count
-            spTrain(i+1,PlotNum)=1;
-            if last_spike == i
-                disp('bink')
+            spTrain(i,PlotNum)=1;
+            if last_spike == i+1
+                disp('two spikes in a row!!')
                 return
             end
             last_spike = i+1;
@@ -101,11 +101,11 @@ I_e=I_e_vect_mat(1:end-1,:);trainM=spTrain;
 [expg_Vreset,expg_EL,expg_k]=gconv(I_e,trainM,g); %temporally convolve paramters with g upto spike time
 
 figure;
-plot(t_vect(2:end),V_reset.*expg_Vreset(:,end) +E_L.*expg_EL(:,end) + k.*expg_k(:,end),'r.');
+plot(t_vect(2:end),V_reset.*expg_Vreset(:,end) +E_L.*expg_EL(:,end) + k.*expg_k(:,end),'r');
 set(gca,'FontSize',16);
 xlabel('Time (ms)');ylabel('Voltage (mV)');
 hold on
-plot(t_vect(2:end),V_vect(2:end),'b.');
+plot(t_vect(2:end),V_vect(2:end),'b');
 plot([0 t_end],[V_th V_th],'k');
 hold off
 xlim([0 t_end]);
