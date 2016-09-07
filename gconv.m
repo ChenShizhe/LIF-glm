@@ -17,8 +17,8 @@ function [expg_Vreset,expg_EL,expg_k] = gconv(I_eg,trainM,g)
             end
         elseif isempty(find(trainM(:,tr)))==0
             te0=find(trainM(:,tr));
-            te1=[0;te0;ntime+1];
-            for i=1:length(te0)
+            te1=[0;te0;ntime];
+            for i=1:length(te0)+1
                 t_elapse=1:(te1(i+1)-te1(i));
                 expg_Vreset(te1(i)+1:te1(i+1),tr)=exp(-g.*t_elapse);
                 expg_EL(te1(i)+1:te1(i+1),tr)=1-exp(-g.*t_elapse);

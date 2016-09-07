@@ -16,10 +16,11 @@ R_m=10; %membrane resistance [MOhm]
 t_vect=0:dt:t_end; 
 V_vect=zeros(1,length(t_vect));
 V_plot_vect=zeros(1,length(t_vect));
+V_plot_vect2=zeros(1,length(t_vect));
 
 %INTEGRATE THE EQUATION tau*dV/dt = -V + E_L + I_e*R_m
 PlotNum=0;
-I_Stim_vect=1.39:0.04:1.59; %magnitudes of pulse of injected current [nA]
+I_Stim_vect=1.:0.1:1.5; %magnitudes of pulse of injected current [nA]
 spTrain=zeros(t_end,length(I_Stim_vect));
 
 for I_Stim=I_Stim_vect; %loop over different I_Stim values
@@ -29,6 +30,7 @@ for I_Stim=I_Stim_vect; %loop over different I_Stim values
         
     V_vect(i)=E_L; %first element of V, i.e. value of V at t=0
     V_plot_vect(i)=V_vect(i); %if no spike, then just plot the actual voltage V
+    V_plot_vect2(i)=V_vect(i);
     I_e_vect=zeros(1,t_StimStart/dt); %portion of I_e_vect from t=0 to t_StimStart
     I_e_vect=[I_e_vect I_Stim*ones(1,1+((t_StimEnd-t_StimStart)/dt))];
     I_e_vect=[I_e_vect zeros(1,(t_end-t_StimEnd)/dt)];
@@ -50,9 +52,10 @@ for I_Stim=I_Stim_vect; %loop over different I_Stim values
         
         %if statement below says what to do if voltage crosses threshold
         if sum(lambda(last_spike+1:i+1))>tao %cell spiked
-            
+            V_plot_vect2(i+1) = V_vect(i+1);
             V_vect(i+1)=V_reset; %set voltage back to V_reset
             V_plot_vect(i+1)=V_spike; %set vector that will be plotted to show a spike here
+            
             NumSpikes=NumSpikes+1; %add 1 to the total spike count
             spTrain(i,PlotNum)=1;
             if last_spike == i+1
@@ -65,6 +68,7 @@ for I_Stim=I_Stim_vect; %loop over different I_Stim values
 %             lambda(i+1)=log(exp(V_vect(i+1)-V_th)+1);
         else %voltage didn't cross threshold so cell does not spike
             V_plot_vect(i+1)=V_vect(i+1); %plot actual voltage
+            V_plot_vect2(i+1) = V_vect(i+1);
 %             lambda(i+1)=log(exp(V_vect(i+1)-V_th)+1);
         end
         i=i+1; %add 1 to index,corresponding to moving forward 1 time step
@@ -76,7 +80,7 @@ for I_Stim=I_Stim_vect; %loop over different I_Stim values
     subplot(length(I_Stim_vect),1,PlotNum)
     plot(t_vect,V_plot_vect);
     hold on
-    plot(t_vect,lambda*100)
+%     plot(t_vect,lambda*100)
     if (PlotNum==1)
         title('Voltage vs. time');
     end
@@ -105,8 +109,10 @@ plot(t_vect(2:end),V_reset.*expg_Vreset(:,end) +E_L.*expg_EL(:,end) + k.*expg_k(
 set(gca,'FontSize',16);
 xlabel('Time (ms)');ylabel('Voltage (mV)');
 hold on
-plot(t_vect(2:end),V_vect(2:end),'b');
+plot(t_vect(2:end),V_plot_vect2(2:end),'b');
 plot([0 t_end],[V_th V_th],'k');
+scatter(find(trainM(:,end)),V_vect(find(trainM(:,end))+1))
+% plot(t_vect(2:end),lambda(2:end)*50 - 65)
 hold off
 xlim([0 t_end]);
 legend('Fitted V(t)','True V(t)');
