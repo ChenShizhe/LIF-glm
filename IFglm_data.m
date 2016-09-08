@@ -72,14 +72,7 @@ figure;
 plot(betahat_conv(1)+betahat_conv(2).*expg_Vreset(:)+betahat_conv(3).*expg_k(:),'r');
 set(gca,'FontSize',16);
 xlabel('Time (ms)');ylabel('Voltage (mV)');
-hold on
-plot(t_vect(2:end),V_plot_vect2(2:end),'b');
-plot([0 t_end],[V_th V_th],'k');
-scatter(find(trainM(:,end)),V_vect(find(trainM(:,end))+1))
-% plot(t_vect(2:end),lambda(2:end)*50 - 65)
-hold off
-xlim([0 t_end]);
-legend('Fitted V(t)','True V(t)');
+
 
 
 
