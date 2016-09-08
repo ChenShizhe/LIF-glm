@@ -2,9 +2,9 @@
 
 %%%DEFINE PARAMETERS
 dt=1; %time step ms
-t_end=500; %total run time ms
-t_StimStart=100; %time to start injecting current
-t_StimEnd=400; %time to end injecting current
+t_end=200; %total run time ms
+t_StimStart=50; %time to start injecting current
+t_StimEnd=55; %time to end injecting current
 V_th=-55; %spike threshold [mV]
 E_L=-70; %resting membrane potential [mV]
 V_reset=-75; %value to reset voltage to after a spike [mV]
@@ -20,12 +20,13 @@ V_plot_vect2=zeros(1,length(t_vect));
 
 %INTEGRATE THE EQUATION tau*dV/dt = -V + E_L + I_e*R_m
 PlotNum=0;
-I_Stim_vect=1.:0.1:1.5; %magnitudes of pulse of injected current [nA]
+I_Stim_vect=.5:0.1:1.0; %magnitudes of pulse of injected current [nA]
 spTrain=zeros(t_end,length(I_Stim_vect));
+clear I_e_vect_mat
 
 for I_Stim=I_Stim_vect; %loop over different I_Stim values
     
-    PlotNum=PlotNum+1;
+    PlotNum = PlotNum+1;
     i=1; %index denoting which element of V is being assigned
         
     V_vect(i)=E_L; %first element of V, i.e. value of V at t=0
@@ -47,7 +48,7 @@ for I_Stim=I_Stim_vect; %loop over different I_Stim values
         %V_inf = E_L + I_e_vect(i)*R_m;
         %V_vect(i+1) = V_inf + (V_vect(i)-V_inf)*exp(-dt/tau);
         
-        V_vect(i+1) = V_vect(i) + (E_L-V_vect(i) + I_e_vect(i)*R_m)/tau; %Euler's method
+        V_vect(i+1) = V_vect(i) + (E_L-V_vect(i) + I_e_vect(i)*R_m*5)/tau; %Euler's method
         lambda(i+1)=log(exp(V_vect(i+1)-V_th)+1);
         
         %if statement below says what to do if voltage crosses threshold
@@ -88,6 +89,7 @@ for I_Stim=I_Stim_vect; %loop over different I_Stim values
         xlabel('Time (ms)');
     end
     ylabel('Voltage (mV)');
+    ylim([-100 100])
     
     if I_Stim ~= I_Stim_vect(end)
         clear lambda
