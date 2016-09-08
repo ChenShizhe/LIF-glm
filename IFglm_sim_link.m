@@ -2,14 +2,14 @@
 
 %%%DEFINE PARAMETERS
 dt=1; %time step ms
-t_end=200; %total run time ms
-t_StimStart=50; %time to start injecting current
-t_StimEnd=55; %time to end injecting current
+t_end=75; %total run time ms
+t_StimStart=6; %time to start injecting current
+t_StimEnd=15; %time to end injecting current
 V_th=-55; %spike threshold [mV]
-E_L=-70; %resting membrane potential [mV]
-V_reset=-75; %value to reset voltage to after a spike [mV]
+E_L=-60; %resting membrane potential [mV]
+V_reset=-60; %value to reset voltage to after a spike [mV]
 V_spike=20; %value to draw a spike to, when cell spikes
-tau=10; %membrane time constant [ms]
+tau=15; %membrane time constant [ms]
 R_m=10; %membrane resistance [MOhm]
 
 %%%DEFINE INITIAL VALUES AND VECTORS TO HOLD RESULTS
@@ -18,6 +18,8 @@ V_vect=zeros(1,length(t_vect));
 V_plot_vect=zeros(1,length(t_vect));
 V_plot_vect2=zeros(1,length(t_vect));
 
+
+%%
 %INTEGRATE THE EQUATION tau*dV/dt = -V + E_L + I_e*R_m
 PlotNum=0;
 I_Stim_vect=.5:0.1:1.0; %magnitudes of pulse of injected current [nA]
@@ -80,7 +82,7 @@ for I_Stim=I_Stim_vect; %loop over different I_Stim values
     figure(2)
     subplot(length(I_Stim_vect),1,PlotNum)
     plot(t_vect,V_plot_vect);
-    hold on
+%     hold on
 %     plot(t_vect,lambda*100)
     if (PlotNum==1)
         title('Voltage vs. time');
