@@ -1,4 +1,4 @@
-load('data\spikes_fix.mat');
+% load('data\spikes_fix.mat');
 
 %%
 ce=1; %choose a cell
@@ -32,7 +32,7 @@ xlim([0 75]);ylim([75 121]);
 end
 
 %%
-load('data\current_template.mat');
+load('data/current_template.mat');
 
 loc=61;
 
