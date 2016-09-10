@@ -148,7 +148,7 @@ for i=1:length(gVec)
 clear expg_Vreset expg_k
 [expg_Vreset,expg_EL,expg_k]=gconv(I_e,trainM,g);
 [betahat_conv,~,stats_conv]=glmfit([expg_Vreset(:) expg_k(:)],trainM(:),'Poisson','link',F);
-lambdahat=glmval(betahat_conv,[expg_Vreset(:) expg_k(:)],'log');
+lambdahat=glmval(betahat_conv,[expg_Vreset(:) expg_k(:)],F);
 logL=sum(log(poisspdf(trainM(:),lambdahat)));
 
 logL_vec(i)=logL;
