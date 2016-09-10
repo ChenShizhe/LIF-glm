@@ -131,3 +131,61 @@ F = {link, derlink, invlink};
 
 [betahat_conv(1) E_L-V_th;betahat_conv(2) V_reset-E_L;betahat_conv(3) k]
 
+%% Prediction
+I_eg_fit=I_e(:,1); %select an input amplitude
+betahat=betahat_conv;
+ntrial=10;
+ntime=length(I_eg_fit);
+simTrain=zeros(ntime,ntrial);
+lambdaMat=zeros(ntime,ntrial);
+spiketime=zeros(ntime,ntrial);
+fit_expg_Vreset=zeros(ntime,ntrial);
+fit_expg_k=zeros(ntime,ntrial);
+for tr=1:ntrial
+    tao=exprnd(1);step=zeros(ntime,1);
+    j=1;lastSpT=0;
+    fit_expg_Vreset(j,tr)=exp(-g*(j-lastSpT));
+    fit_expg_k(j,tr)=exp(-g.*(j-[lastSpT+1:j]))*I_eg_fit(lastSpT+1:j);
+    a=[fit_expg_Vreset(j,tr) fit_expg_k(j,tr)];
+    step(j)=log(exp(betahat(1)+dot(betahat(2:end),a))+1);
+    lambdaMat(j,tr)=step(j);
+while (j<=ntime)
+    if sum(step)>tao
+        step=zeros(ntime,1);
+        simTrain(j,tr)=1; %spike
+        tao=exprnd(1);
+        lastSpT=j;
+        if j==ntime
+            break
+        else
+            j=j+1;
+            fit_expg_Vreset(j,tr)=exp(-g*(j-lastSpT));
+            fit_expg_k(j,tr)=exp(-g.*(j-[lastSpT+1:j]))*I_eg_fit(lastSpT+1:j);
+            a=[fit_expg_Vreset(j,tr) fit_expg_k(j,tr)];
+            step(j)=log(exp(betahat(1)+dot(betahat(2:end),a))+1);
+            lambdaMat(j,tr)=step(j);
+        end
+    else
+        simTrain(j,tr)=0;
+        if j==ntime
+            break
+        else
+            j=j+1;
+            fit_expg_Vreset(j,tr)=exp(-g*(j-lastSpT));
+            fit_expg_k(j,tr)=exp(-g.*(j-[lastSpT+1:j]))*I_eg_fit(lastSpT+1:j);
+            a=[fit_expg_Vreset(j,tr) fit_expg_k(j,tr)];
+            step(j)=log(exp(betahat(1)+dot(betahat(2:end),a))+1);
+            lambdaMat(j,tr)=step(j);
+        end
+    end
+end
+end
+
+
+figure;
+imagesc(simTrain');
+colormap(flipud(gray));
+xlabel('Time (ms)');ylabel('Trial (100mV)');
+box off;
+
+
