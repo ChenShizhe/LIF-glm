@@ -131,6 +131,33 @@ F = {link, derlink, invlink};
 
 [betahat_conv(1) E_L-V_th;betahat_conv(2) V_reset-E_L;betahat_conv(3) k]
 
+%% logLikelihood
+I_e=I_e_vect_mat(1:end-1,:);trainM=spTrain;
+
+gVec=0.01:0.01:0.15;
+
+link = @(mu) log(exp(mu)-1);
+derlink = @(mu) exp(mu)./(exp(mu)-1);
+invlink = @(resp) log(1 + exp(resp));
+F = {link, derlink, invlink};
+
+
+for i=1:length(gVec)
+    g=gVec(i);
+
+clear expg_Vreset expg_k
+[expg_Vreset,expg_EL,expg_k]=gconv(I_e,trainM,g);
+[betahat_conv,~,stats_conv]=glmfit([expg_Vreset(:) expg_k(:)],trainM(:),'Poisson','link',F);
+lambdahat=glmval(betahat_conv,[expg_Vreset(:) expg_k(:)],'log');
+logL=sum(log(poisspdf(trainM(:),lambdahat)));
+
+logL_vec(i)=logL;
+end
+
+figure;plot(logL_vec);set(gca,'XTick',1:length(gVec),'XTickLabel',gVec,'FontSize',16);
+xlabel('g');ylabel('log-likelihood');
+[find(logL_vec==max(logL_vec)) gVec(find(logL_vec==max(logL_vec)))]
+
 %% Prediction
 I_eg_fit=I_e(:,1); %select an input amplitude
 betahat=betahat_conv;
