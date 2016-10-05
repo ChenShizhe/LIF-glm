@@ -151,28 +151,27 @@ end
 
 
 %% log-likelihood
-% gVec=0.02:0.02:0.2;
-% logL_vec=zeros(length(gVec),1);
-% for i=1:length(gVec)
-%     g=gVec(i);
-%     [expg_Vreset,expg_EL,expg_k]=gconv(I_eg,trainM,g); %temporally convolve paramters with g upto spike time
-%     for iloc=1:8
-%         expg_k_loc(:,iloc)=expg_k(:).*ind_allLoc(:,iloc+1);
-%     end
-%     [betahat_conv_allLoc,~,stats_conv]=glmfit([ind1st(:).*expg_Vreset(:) expg_k(:) ind_allLoc(:,2:9) expg_k_loc],spTrain_allLoc,'Poisson','link',F);
-%     lambdahat_allLoc=glmval(betahat_conv_allLoc,[ind1st(:).*expg_Vreset(:) expg_k(:) ind_allLoc(:,2:9) expg_k_loc],F);
-%     logL=sum(log(poisspdf(trainM(:),lambdahat_allLoc)));
-%     logL_vec(i)=logL;
-% end
-% figure;plot(logL_vec);set(gca,'XTick',1:5:length(gVec),'XTickLabel',gVec(1:5:end),'FontSize',16);
-% xlabel('g');ylabel('log-likelihood');
-% [find(logL_vec==max(logL_vec)) gVec(find(logL_vec==max(logL_vec)))]
+gVec=0.02:0.02:0.2;
+logL_vec=zeros(length(gVec),1);
+for i=1:length(gVec)
+    g=gVec(i);
+    [expg_Vreset,expg_EL,expg_k]=gconv(I_eg,trainM,g); %temporally convolve paramters with g upto spike time
+    for iloc=1:8
+        expg_k_loc(:,iloc)=expg_k(:).*ind_allLoc(:,iloc+1);
+    end
+    [betahat_conv_allLoc,~,stats_conv]=glmfit([ind1st(:).*expg_Vreset(:) expg_k(:) expg_k_loc],spTrain_allLoc,'Poisson','link',F);
+    lambdahat_allLoc=glmval(betahat_conv_allLoc,[ind1st(:).*expg_Vreset(:) expg_k(:) expg_k_loc],F);
+    logL=sum(log(poisspdf(trainM(:),lambdahat_allLoc)));
+    logL_vec(i)=logL;
+end
+figure;plot(logL_vec);set(gca,'XTick',1:5:length(gVec),'XTickLabel',gVec(1:5:end),'FontSize',16);
+xlabel('g');ylabel('log-likelihood');
+[find(logL_vec==max(logL_vec)) gVec(find(logL_vec==max(logL_vec)))]
 
 
 %%
 I_eg=repmat(I_e,1,9);
-% g=gVec(find(logL_vec==max(logL_vec))); %MLE
-g=0.1;
+g=gVec(find(logL_vec==max(logL_vec))); %MLE
 [expg_Vreset,expg_EL,expg_k]=gconv(I_eg,trainM,g); %temporally convolve paramters with g upto spike time
 for iloc=1:8
     expg_k_loc(:,iloc)=expg_k(:).*ind_allLoc(:,iloc+1);
