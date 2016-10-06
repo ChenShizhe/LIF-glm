@@ -20,7 +20,7 @@ g=0.1; %membrane time constant [ms]
 k=0.04-0.002*locid; %membrane resistance [MOhm]
 k_vec(locid)=k;
 
-stoc_mu=0;stoc_sigma=0.4;
+stoc_mu=0;stoc_sigma=0.3;
 
 %%%DEFINE INITIAL VALUES AND VECTORS TO HOLD RESULTS
 t_vect=0:dt:t_end; 
@@ -319,4 +319,9 @@ for ii=1:9
     xlabel('Time (ms)');
 end
 
+
+%% predicted voltage
+%%%%for diagnostic purposes, it would be helpful to plot the GLM predicted voltage next to the true spikes,
+%%%%especially in cases where the neuron spikes predictably:
+%%%%if the predicted voltage consistently gets large in the wrong place, this would indicate that the input current model should be changed
 
