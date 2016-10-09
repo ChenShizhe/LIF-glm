@@ -50,7 +50,7 @@ for ii=1:nloc
     spTrain_allLoc=[spTrain_allLoc;spTrain(:)];
     Ie_allLoc=[Ie_allLoc;I_e(:)];
     nii=size(spTrain,1)*size(spTrain,2);
-    ind_allLoc((ii-1)*nii+1:ii*nii,ii)=ii-1;
+    ind_allLoc((ii-1)*nii+1:ii*nii,ii)=1;
     
     subplot(3,3,ii);
     imagesc(spTrain');
