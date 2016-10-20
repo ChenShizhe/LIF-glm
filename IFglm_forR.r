@@ -8,6 +8,14 @@ design1<-dataMat$design1;
 design2<-dataMat$design2;
 Y<-dataMat$Y;
 
+########################
+net.fit<-glmnet(cbind(design1[,2]*-1,design2),Y,lower=0,family='poisson');
+betafit<-coef(net.fit,0);
+
+write(betafit[,1], file = "betafit.txt", sep = " ");
+
+######################
+
 # vlog <- function() {
 #   ## link
 #   linkfun <- function(y) log(exp(y)-1)
@@ -89,8 +97,5 @@ Y<-dataMat$Y;
 
 
 
-########################
-net.fit<-glmnet(cbind(design1[,2]*-1,design2),Y,lower=0,family='poisson');
-betafit<-coef(net.fit,0);
 
-write(betafit[,1], file = "betafit.txt", sep = " ")
+
