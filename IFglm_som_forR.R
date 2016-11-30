@@ -12,6 +12,7 @@ Y<-dataMat$Y;
 ########################
 net.fit<-glmnet(cbind(design1[,2]*-1,design2),Y,lower=0,family='poisson');
 betafit<-coef(net.fit,0);
+betafit[2]<-betafit[2]*-1;
 
 betafit
 
