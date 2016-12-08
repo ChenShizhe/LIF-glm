@@ -4,10 +4,20 @@ load('data\som_lif_glm_voltage_data.mat');
 ind_e_all=[3 5];
 
 % ind_sp_all=[1 4]; %cell 1
-% ind_sp_all=[18 17]; %cell 7
-ind_sp_all=[28 27]; %cell 12
+ind_sp_all=[18 17]; %cell 7
+% ind_sp_all=[28 27]; %cell 12
 
-%%
+%% 'functionized' code for R
+loc_sp=0;e_max=1;
+[ design1,design2,Y,nloc_sp,loc_min ] = IFglm_som( ind_sp_all,ind_e_all, loc_sp, e_max, all_data );
+
+
+
+
+%%% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%%%
+
+%% non-functionized code below
+
 
 %% select a cell and an input current
 ind_sp=ind_sp_all(1);ind_e=ind_e_all(1);
@@ -23,7 +33,7 @@ for loc=locVec
     end
 end
 
-locVec_sp=locVec;
+% locVec_sp=locVec;
 
 locVec_sp_pt1=locVec_sp;
 locVec_spC_pt1=locVec_spC;
@@ -87,6 +97,8 @@ for loc=locVec_sp
     trainM=[trainM spTrain_byLoc{loc}];
     IeM=[IeM Ie_byLoc{loc}]; % current known at every location
 end
+
+% IeM=repmat(Ie_byLoc{12},1,nloc_sp); % fixed current at max
 
 % with an indicator for >1st spike
 ind1st_allLoc=[];ind1st=[];
@@ -153,6 +165,8 @@ for loc=locVec_sp
     trainM=[trainM spTrain_byLoc{loc}];
     IeM=[IeM Ie_byLoc{loc}]; % current known at every location
 end
+% IeM=repmat(Ie_byLoc{12},1,nloc_sp); % fixed current at max
+
 
 % with an indicator for >1st spike
 ind1st_allLoc=[];ind1st=[];
@@ -212,6 +226,11 @@ Y=[Y_pt1;Y_pt2];
 % betahat_conv_allLoc=[-8.578219 -3.394433 0 0 0 0 0 0 0 0.008505008 0 0 0.005525908 0.004630355 0.006062297 0 0 0 0 0 0 0 0 0 0 0 0];
 %%%% cell 12 location 1 all stim all locations (include zeros)
 
+% betahat_conv_allLoc=[-7.093623 -2.69048 0 0.0005271575 0.001878658 0.0007967056 0.001637088 0.003067181 0.003711378 0.0005692599 0.001782052 0.001812949 0.001938018 0 0.0001889322];
+%%%% cell 7 location 2 all stim spiking loc
+
+
+
 gain_vec=zeros(nloc_sp,1);
 gain_vec(loc_min)=betahat_conv_allLoc(3);
 loc_mmVec=[1:loc_min-1 loc_min+1:nloc_sp];
@@ -225,7 +244,7 @@ end
 
 
 %% current type 1
-ind_sp=ind_sp_all(1);ind_e=ind_e_all(1);
+ind_e=ind_e_all(1);
 
 locVec=1:25;Ie_byLoc=[];
 for loc=locVec
@@ -354,7 +373,7 @@ subplot(244);
 
     
 %% current type 2
-ind_sp=ind_sp_all(2);ind_e=ind_e_all(2);
+ind_e=ind_e_all(2);
 
 locVec=1:25;Ie_byLoc=[];
 for loc=locVec
